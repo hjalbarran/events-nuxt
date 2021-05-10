@@ -11,6 +11,9 @@
 </template>
 <script>
 import EventCard from '~/components/EventCard.vue'
+// import EventService from '~/services/EventService.js'
+import { mapState } from 'vuex'
+
 export default {
   components: { EventCard },
   head() {
@@ -18,12 +21,9 @@ export default {
       title: 'Event Listing',
     }
   }, 
-  async asyncData({ $axios, error }) { // Nuxt Extra Hook 
+  async fetch({ store, error }) { // Nuxt Extra Hook 
     try {
-      const response = await $axios.get('http://localhost:3000/events')
-      return {
-        events: response.data
-      }
+      await store.dispatch('events/fetchEvents')
     }
     catch(e) {
       error({
@@ -31,6 +31,9 @@ export default {
         message: 'Unable to fetch events at this time. Please try again.'
       })
     }
-  }
+  }, 
+  computed: mapState({
+    events: state => state.events.events
+  })
 }
 </script>
